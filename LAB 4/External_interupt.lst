@@ -1,0 +1,389 @@
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;**********************************************************************
+                      00002 ;   This file is a basic code template for assembly code generation   *
+                      00003 ;   on the PIC16F84A. This file contains the basic code               *
+                      00004 ;   building blocks to build upon.                                    *
+                      00005 ;                                                                     *
+                      00006 ;   Refer to the MPASM User's Guide for additional information on     *
+                      00007 ;   features of the assembler (Document DS33014).                     *
+                      00008 ;                                                                     *
+                      00009 ;   Refer to the respective PIC data sheet for additional             *
+                      00010 ;   information on the instruction set.                               *
+                      00011 ;                                                                     *
+                      00012 ;**********************************************************************
+                      00013 ;                                                                     *
+                      00014 ;    Filename:      xxx.asm                                           *
+                      00015 ;    Date:                                                            *
+                      00016 ;    File Version:                                                    *
+                      00017 ;                                                                     *
+                      00018 ;    Author:                                                          *
+                      00019 ;    Company:                                                         *
+                      00020 ;                                                                     *
+                      00021 ;                                                                     *
+                      00022 ;**********************************************************************
+                      00023 ;                                                                     *
+                      00024 ;    Files Required: P16F84A.INC                                      *
+                      00025 ;                                                                     *
+                      00026 ;**********************************************************************
+                      00027 ;                                                                     *
+                      00028 ;    Notes:                                                           *
+                      00029 ;                                                                     *
+                      00030 ;**********************************************************************
+                      00031 
+                      00032 
+                      00033         list      p=16F84A            ; list directive to define processor
+                      00034         #include <p16F84A.inc>        ; processor specific variable definitions
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC16F84A processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2013 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00208         LIST
+                      00035 
+2007   3FF2           00036         __CONFIG   _CP_OFF & _WDT_OFF & _PWRTE_ON & _HS_OSC
+                      00037 
+                      00038 ; '__CONFIG' directive is used to embed configuration data within .asm file.
+                      00039 ; The lables following the directive are located in the respective .inc file.
+                      00040 ; See respective data sheet for additional information on configuration word.
+                      00041 
+                      00042 
+                      00043 
+                      00044 
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00045 ;***** VARIABLE DEFINITIONS
+  0000000C            00046 w_temp        EQU     0x0C        ; variable used for context saving
+  0000000D            00047 status_temp   EQU     0x0D        ; variable used for context saving
+                      00048 
+Warning[205]: Found directive in column 1. (CBLOCK)
+                      00049 CBLOCK 0x0E
+  0000000E            00050         delay_count
+  0000000F            00051         delay_countTwo
+  00000010            00052         Scale
+Warning[205]: Found directive in column 1. (ENDC)
+                      00053 ENDC
+                      00054 
+                      00055 
+                      00056 
+                      00057 
+                      00058 
+                      00059 
+                      00060 ;**********************************************************************
+0000                  00061                 ORG     0x000             ; processor reset vector
+0000   280E           00062                 goto    Main              ; go to beginning of program
+                      00063 
+                      00064 
+0004                  00065                 ORG     0x004             ; interrupt vector location
+0004   008C           00066                 movwf   w_temp            ; save off current W register contents
+0005   0803           00067                 movf    STATUS,w          ; move status register into W register
+0006   008D           00068                 movwf   status_temp       ; save off contents of STATUS register
+                      00069 
+                      00070         
+0007   188B           00071                 btfsc INTCON, INTF
+0008   2026           00072                         call TimerInterrupt
+                      00073 
+                      00074 
+                      00075 
+0009   080D           00076                 movf    status_temp,w     ; retrieve copy of STATUS register
+000A   0083           00077                 movwf   STATUS            ; restore pre-isr STATUS register contents
+000B   0E8C           00078                 swapf   w_temp,f
+000C   0E0C           00079                 swapf   w_temp,w          ; restore pre-isr W register contents
+000D   0009           00080                 retfie                    ; return from interrupt
+                      00081 
+000E                  00082 Main
+Warning[203]: Found opcode in column 1. (bsf)
+000E   1683           00083 bsf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movlw)
+000F   3000           00084 movlw 0x00;
+Warning[203]: Found opcode in column 1. (movwf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0010   0085           00085 movwf TRISA;
+Warning[203]: Found opcode in column 1. (bcf)
+0011   1283           00086 bcf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movlw)
+0012   3000           00087 movlw 0x00;
+Warning[203]: Found opcode in column 1. (movwf)
+0013   0085           00088 movwf PORTA;
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[203]: Found opcode in column 1. (movlw)
+0014   3001           00089 movlw b'00000001';
+Warning[203]: Found opcode in column 1. (bsf)
+0015   1683           00090 bsf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movwf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0016   0086           00091 movwf TRISB;
+Warning[203]: Found opcode in column 1. (movlw)
+0017   3000           00092 movlw 0x00;
+Warning[203]: Found opcode in column 1. (bcf)
+0018   1283           00093 bcf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movwf)
+0019   0086           00094 movwf PORTB;
+                      00095 
+                      00096 
+Warning[203]: Found opcode in column 1. (clrwdt)
+001A   0064           00097 clrwdt ;
+Warning[203]: Found opcode in column 1. (bsf)
+001B   1683           00098 bsf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movlw)
+001C   3048           00099 movlw b'01001000'
+Warning[203]: Found opcode in column 1. (movwf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001D   0081           00100 movwf OPTION_REG
+Warning[203]: Found opcode in column 1. (bcf)
+001E   1283           00101 bcf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movlw)
+001F   3090           00102 movlw b'10010000'
+Warning[203]: Found opcode in column 1. (movwf)
+0020   008B           00103 movwf INTCON
+                      00104 
+Warning[203]: Found opcode in column 1. (movlw)
+0021   3001           00105 movlw 0x01
+Warning[203]: Found opcode in column 1. (call)
+0022   2030           00106 call EERead
+Warning[203]: Found opcode in column 1. (movwf)
+0023   0085           00107 movwf PORTA
+                      00108 
+0024                  00109 loop
+Warning[203]: Found opcode in column 1. (nop)
+0024   0000           00110 nop
+Warning[203]: Found opcode in column 1. (goto)
+0025   2824           00111 goto loop
+                      00112                 
+                      00113 
+                      00114 
+                      00115 
+Warning[207]: Found label after column 1. (TimerInterrupt)
+0026                  00116    TimerInterrupt
+0026   2029           00117                 call ToggleLight
+0027   108B           00118                 bcf INTCON , INTF
+0028   0008           00119         return
+                      00120 
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[207]: Found label after column 1. (ToggleLight)
+0029                  00121                 ToggleLight
+0029   3002           00122                         movlw b'00010'
+002A   0685           00123                         xorwf PORTA, 1
+002B   0805           00124                         movfw PORTA
+002C   0088           00125                         movwf EEDATA
+002D   3001           00126                         movlw 0x01
+002E   2037           00127                         call EEWrite
+002F   0008           00128                 return
+                      00129 
+                      00130 
+0030                  00131 EERead
+Warning[203]: Found opcode in column 1. (BCF)
+0030   1283           00132 BCF STATUS, RP0  
+Warning[203]: Found opcode in column 1. (movwf)
+0031   0089           00133 movwf EEADR
+Warning[203]: Found opcode in column 1. (bsf)
+0032   1683           00134 bsf STATUS, RP0
+Warning[203]: Found opcode in column 1. (bsf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0033   1408           00135 bsf EECON1, RD
+Warning[203]: Found opcode in column 1. (bcf)
+0034   1283           00136 bcf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movf)
+0035   0808           00137 movf EEDATA, w
+Warning[203]: Found opcode in column 1. (return)
+0036   0008           00138 return
+                      00139 
+0037                  00140 EEWrite
+                      00141 ;bsf EECON1, WREN
+Warning[203]: Found opcode in column 1. (movwf)
+0037   0089           00142 movwf EEADR
+Warning[203]: Found opcode in column 1. (bsf)
+0038   1683           00143 bsf STATUS, RP0
+Warning[203]: Found opcode in column 1. (movlw)
+0039   3055           00144 movlw 0x55
+Warning[203]: Found opcode in column 1. (movwf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003A   0089           00145 movwf EECON2
+Warning[203]: Found opcode in column 1. (movlw)
+003B   30AA           00146 movlw 0xAA
+Warning[203]: Found opcode in column 1. (movwf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003C   0089           00147 movwf EECON2
+Warning[203]: Found opcode in column 1. (bsf)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003D   1488           00148 bsf EECON1, WR
+Warning[203]: Found opcode in column 1. (bcf)
+003E   1283           00149 bcf STATUS, RP0
+Warning[203]: Found opcode in column 1. (return)
+003F   0008           00150 return
+                      00151 
+Warning[205]: Found directive in column 1. (END)
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00152 END
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+EERead                            00000030
+EEWrite                           00000037
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+Main                              0000000E
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+Scale                             00000010
+T0CS                              00000005
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TimerInterrupt                    00000026
+ToggleLight                       00000029
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CONFIG                           00002007
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+delay_count                       0000000E
+MPASM  5.51             EXTERNAL_INTERUPT.ASM   11-16-2016  19:12:52         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+delay_countTwo                    0000000F
+loop                              00000024
+status_temp                       0000000D
+w_temp                            0000000C
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    61
+Program Memory Words Free:   963
+
+
+Errors   :     0
+Warnings :    45 reported,     0 suppressed
+Messages :     7 reported,     0 suppressed
+
+

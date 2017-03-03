@@ -1,0 +1,11 @@
+Warning[205] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 49 : Found directive in column 1. (CBLOCK)
+Warning[205] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 53 : Found directive in column 1. (ENDC)
+Warning[203] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 112 : Found opcode in column 1. (goto)
+Warning[207] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 118 : Found label after column 1. (Delay_loop_big)
+Warning[207] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 121 : Found label after column 1. (Delay_loop)
+Message[305] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 123 : Using default destination of 1 (file).
+Message[305] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 125 : Using default destination of 1 (file).
+Warning[203] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 127 : Found opcode in column 1. (return)
+Warning[207] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 131 : Found label after column 1. (Wait_for_finish)
+Warning[203] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 138 : Found opcode in column 1. (return)
+Warning[205] C:\USERS\ASTENSON\DESKTOP\LAB5\LAB5.ASM 140 : Found directive in column 1. (END)

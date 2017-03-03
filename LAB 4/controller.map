@@ -1,0 +1,52 @@
+MPLINK 4.49, Linker
+Linker Map File - Created Wed Nov 02 19:23:52 2016
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x000090
+.config_2007_CONTROLLER.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x00004b      
+                            0x002007    0x002007      
+            74 out of 1094 program addresses used, program memory utilization is 6%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    Delay   0x000041    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                 DelayTwo   0x000043    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+            DelayTwo_loop   0x000045    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_1   0x00001b    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_2   0x00002a    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_4   0x00003a    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_8   0x000035    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                     Main   0x00000c    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                 MainLoop   0x000012    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     Main   0x00000c    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                 MainLoop   0x000012    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_1   0x00001b    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_2   0x00002a    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_8   0x000035    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    GHZ_4   0x00003a    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                    Delay   0x000041    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+                 DelayTwo   0x000043    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+            DelayTwo_loop   0x000045    program     static C:\Users\rkuthial\Desktop\LAB 4\controller.ASM
+
+

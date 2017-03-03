@@ -1,0 +1,434 @@
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;**********************************************************************
+                      00002 ;   This file is a basic code template for assembly code generation   *
+                      00003 ;   on the PIC12F675. This file contains the basic code               *
+                      00004 ;   building blocks to build upon.                                    *
+                      00005 ;                                                                     *
+                      00006 ;   Refer to the MPASM User's Guide for additional information on     *
+                      00007 ;   features of the assembler (Document DS33014).                     *
+                      00008 ;                                                                     *
+                      00009 ;   Refer to the respective PIC data sheet for additional             *
+                      00010 ;   information on the instruction set.                               *
+                      00011 ;                                                                     *
+                      00012 ;**********************************************************************
+                      00013 ;                                                                     *
+                      00014 ;    Filename:      xxx.asm                                           *
+                      00015 ;    Date:                                                            *
+                      00016 ;    File Version:                                                    *
+                      00017 ;                                                                     *
+                      00018 ;    Author:                                                          *
+                      00019 ;    Company:                                                         *
+                      00020 ;                                                                     *
+                      00021 ;                                                                     *
+                      00022 ;**********************************************************************
+                      00023 ;                                                                     *
+                      00024 ;    Files Required: P12F675.INC                                      *
+                      00025 ;                                                                     *
+                      00026 ;**********************************************************************
+                      00027 ;                                                                     *
+                      00028 ;    Notes:                                                           *
+                      00029 ;                                                                     *
+                      00030 ;**********************************************************************
+                      00031 
+                      00032         list      p=12f675           ; list directive to define processor
+                      00033         #include <p12f675.inc>        ; processor specific variable definitions
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC12F675 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2013 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00366         LIST
+                      00034 
+                      00035         errorlevel  -302              ; suppress message 302 from list file
+                      00036 
+2007   3F84           00037         __CONFIG   _CP_OFF & _CPD_OFF & _BODEN_OFF & _MCLRE_OFF & _WDT_OFF & _PWRTE_ON & _INTRC_OSC_NOCL
+                            KOUT 
+                      00038 
+                      00039 ; '__CONFIG' directive is used to embed configuration word within .asm file.
+                      00040 ; The lables following the directive are located in the respective .inc file.
+                      00041 ; See data sheet for additional information on configuration word settings.
+                      00042 
+                      00043 
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00044 
+                      00045 
+                      00046 ;***** VARIABLE DEFINITIONS
+  00000020            00047 w_temp        EQU     0x20        ; variable used for context saving 
+  00000021            00048 status_temp   EQU     0x21        ; variable used for context saving
+Warning[205]: Found directive in column 1. (CBLOCK)
+                      00049 CBLOCK  0x40
+  00000040            00050 ADData
+  00000041            00051 delay_count2
+  00000042            00052 delay_count
+Warning[205]: Found directive in column 1. (ENDC)
+                      00053 endc
+                      00054 
+                      00055 
+                      00056 
+                      00057 
+                      00058 
+                      00059 ;**********************************************************************
+0000                  00060                 ORG     0x000             ; processor reset vector
+0000   280C           00061                 goto    main              ; go to beginning of program
+                      00062         
+                      00063 
+0004                  00064                 ORG     0x004             ; interrupt vector location
+0004   00A0           00065                 movwf   w_temp            ; save off current W register contents
+0005   0803           00066                 movf    STATUS,w          ; move status register into W register
+0006   00A1           00067                 movwf   status_temp       ; save off contents of STATUS register
+                      00068 
+                      00069 
+                      00070 ; isr code can go here or be located as a call subroutine elsewhere
+                      00071 
+                      00072 
+                      00073 
+0007   0821           00074                 movf    status_temp,w     ; retrieve copy of STATUS register
+0008   0083           00075                 movwf   STATUS            ; restore pre-isr STATUS register contents
+0009   0EA0           00076                 swapf   w_temp,f
+000A   0E20           00077                 swapf   w_temp,w          ; restore pre-isr W register contents
+000B   0009           00078                 retfie                    ; return from interrupt
+                      00079 
+                      00080 
+                      00081 ; these first 4 instructions are not required if the internal oscillator is not used
+000C                  00082 main
+000C   23FF           00083                 call    0x3FF             ; retrieve factory calibration value
+000D   1683           00084                 bsf     STATUS,RP0        ; set file register bank to 1 
+000E   0090           00085                 movwf   OSCCAL            ; update register with factory cal value 
+000F   1283           00086                 bcf     STATUS,RP0        ; set file register bank to 0
+                      00087 
+                      00088 
+                      00089 ; remaining code goes here
+0010   1283           00090                 bcf STATUS, RP0
+0011   3007           00091                 movlw b'00000111'
+0012   0099           00092                 movwf CMCON 
+0013   308D           00093                 movlw b'10001101'
+0014   009F           00094                 movwf ADCON0
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0015   1683           00095                 bsf STATUS, RP0 
+0016   3018           00096                 movlw b'00011000'
+0017   009F           00097                 movwf ANSEL
+0018   3010           00098                 movlw b'010000'
+0019   0085           00099                 movwf TRISIO 
+001A   1283           00100                 bcf STATUS, RP0
+                      00101                 
+                      00102 
+                      00103 
+                      00104 
+                      00105 
+001B                  00106 Main_Loop
+001B   1685           00107         bsf GPIO, 0x05  ;turn the LED on
+001C   2021           00108         call Delay              ;delay
+001D   1285           00109         bcf GPIO, 0x05  ;turn LED off
+001E   2021           00110         call Delay              ;delay
+001F   202B           00111         call Get_AD_Sample;
+Warning[203]: Found opcode in column 1. (goto)
+0020   281B           00112 goto Main_Loop
+                      00113         
+0021                  00114 Delay
+0021   0840           00115         movf ADData, W
+                      00116 
+0022   00C1           00117         movwf delay_count2      ;init outer loop index
+Warning[207]: Found label after column 1. (Delay_loop_big)
+0023                  00118         Delay_loop_big
+0023   30FF           00119                 movlw 0xFF
+0024   00C2           00120                 movwf delay_count       ;init inner loop index
+Warning[207]: Found label after column 1. (Delay_loop)
+0025                  00121         Delay_loop
+0025   0000           00122                 nop
+Message[305]: Using default destination of 1 (file).
+0026   0BC2           00123                 decfsz delay_count
+0027   2825           00124                         goto Delay_loop
+Message[305]: Using default destination of 1 (file).
+0028   0BC1           00125                 decfsz delay_count2
+0029   2823           00126                         goto Delay_loop_big
+Warning[203]: Found opcode in column 1. (return)
+002A   0008           00127 return
+                      00128 
+002B                  00129 Get_AD_Sample
+002B   149F           00130         bsf ADCON0,1
+Warning[207]: Found label after column 1. (Wait_for_finish)
+002C                  00131         Wait_for_finish
+002C   1F0C           00132         btfss PIR1,6
+002D   282C           00133         goto Wait_for_finish
+002E   1683           00134         bsf STATUS,RP0
+002F   081E           00135         movf ADRESL, W
+0030   00C0           00136         movwf ADData
+0031   1283           00137         bcf STATUS, RP0
+Warning[203]: Found opcode in column 1. (return)
+0032   0008           00138 return
+                      00139 
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Warning[205]: Found directive in column 1. (END)
+                      00140 END
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADCON0                            0000001F
+ADCS0                             00000004
+ADCS1                             00000005
+ADCS2                             00000006
+ADData                            00000040
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS2                              00000002
+ANS3                              00000003
+ANSEL                             0000009F
+C                                 00000000
+CAL0                              00000002
+CAL1                              00000003
+CAL2                              00000004
+CAL3                              00000005
+CAL4                              00000006
+CAL5                              00000007
+CHS0                              00000002
+CHS1                              00000003
+CINV                              00000004
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             00000019
+CMIE                              00000003
+CMIF                              00000003
+COUT                              00000006
+DC                                00000001
+Delay                             00000021
+Delay_loop                        00000025
+Delay_loop_big                    00000023
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDAT                             0000009A
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+GP0                               00000000
+GP1                               00000001
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+GP2                               00000002
+GP3                               00000003
+GP4                               00000004
+GP5                               00000005
+GPIE                              00000003
+GPIF                              00000000
+GPIO                              00000005
+GPIO0                             00000000
+GPIO1                             00000001
+GPIO2                             00000002
+GPIO3                             00000003
+GPIO4                             00000004
+GPIO5                             00000005
+Get_AD_Sample                     0000002B
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOC                               00000096
+IOC0                              00000000
+IOC1                              00000001
+IOC2                              00000002
+IOC3                              00000003
+IOC4                              00000004
+IOC5                              00000005
+IOCB                              00000096
+IOCB0                             00000000
+IOCB1                             00000001
+IOCB2                             00000002
+IOCB3                             00000003
+IOCB4                             00000004
+IOCB5                             00000005
+IRP                               00000007
+Main_Loop                         0000001B
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_GPPU                          00000007
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OPTION_REG                        00000081
+OSCCAL                            00000090
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PS0                               00000000
+PS1                               00000001
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PS2                               00000002
+PSA                               00000003
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1IE                              00000000
+T1IF                              00000000
+T1OSCEN                           00000003
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TRISIO                            00000085
+TRISIO0                           00000000
+TRISIO1                           00000001
+TRISIO2                           00000002
+TRISIO3                           00000003
+TRISIO4                           00000004
+TRISIO5                           00000005
+VCFG                              00000006
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000099
+VREN                              00000007
+VRR                               00000005
+W                                 00000000
+WPU                               00000095
+WPU0                              00000000
+WPU1                              00000001
+WPU2                              00000002
+WPU4                              00000004
+WPU5                              00000005
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Wait_for_finish                   0000002C
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Z                                 00000002
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CONFIG                           00002007
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003EFF
+_CP_OFF                           00003FFF
+_CP_ON                            00003F7F
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FOSC_EC                          00003FFB
+_FOSC_EXTRCCLK                    00003FFF
+_FOSC_EXTRCIO                     00003FFE
+_FOSC_HS                          00003FFA
+_FOSC_INTRCCLK                    00003FFD
+_FOSC_INTRCIO                     00003FFC
+_FOSC_LP                          00003FF8
+_FOSC_XT                          00003FF9
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDTE_OFF                         00003FF7
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FF9
+__12F675                          00000001
+__DEBUG                           1
+delay_count                       00000042
+delay_count2                      00000041
+main                              0000000C
+status_temp                       00000021
+w_temp                            00000020
+MPASM  5.51                          LAB5.ASM   11-30-2016  19:52:06         PAGE  9
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+
+0000 : X---XXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXX-------------
+2000 : -------X-------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    48
+Program Memory Words Free:   976
+
+
+Errors   :     0
+Warnings :     9 reported,     0 suppressed
+Messages :     2 reported,     4 suppressed
+
+
